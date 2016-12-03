@@ -15,10 +15,29 @@ class TriangleParser:
 
 	def getTriangles(self):
 		triangles = []
+		count = 0
+
+		tempDatas = []
+
 		for data in self.datas:
 			data = data.replace("\n", "")
 			dataTokens = data.split();
-			triangles.append(Triangle(dataTokens[0], dataTokens[1], dataTokens[2]))
+			
+			tempDatas.append(dataTokens)
+
+
+			count += 1
+			if count == 3:
+				# Construct triangle here
+				triangles.append(Triangle(tempDatas[0][0], tempDatas[1][0], tempDatas[2][0]))
+				triangles.append(Triangle(tempDatas[0][1], tempDatas[1][1], tempDatas[2][1]))
+				triangles.append(Triangle(tempDatas[0][2], tempDatas[1][2], tempDatas[2][2]))
+
+				# Re init for next 3 rows
+				count = 0
+				tempDatas = []
+
+
 		return triangles
 
 numberOfArgs = len(sys.argv)
