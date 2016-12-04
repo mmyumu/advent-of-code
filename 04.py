@@ -3,9 +3,8 @@ import re
 
 class Room:
 	def __init__(self, groups):
-		print groups
 		self.encryptedName = groups[0]
-		self.sectorId = groups[1]
+		self.sectorId = int(groups[1])
 		self.checksum = groups[2]
 
 	def isReal(self):
@@ -31,6 +30,20 @@ class Room:
 
 		return True
 
+	def decrypt(self):
+		decryptedName = ""
+		for letter in self.encryptedName:
+			if letter == '-':
+				decryptedName += " "
+			else:
+				letterAscii = ord(letter)
+				letterAscii -= 97
+				letterAscii += self.sectorId
+				letterAscii = letterAscii%26
+				letterAscii += 97
+				decryptedName += chr(letterAscii)
+
+		return decryptedName
 
 numberOfArgs = len(sys.argv)
 
@@ -49,7 +62,7 @@ for input in inputs:
 
 	room = Room(m.groups())
 	if room.isReal() == True:
-		print "real"
-		total += int(room.sectorId)
-
-print "Total: " + str(total)
+		decryptedName = room.decrypt()
+		if "north" in decryptedName:
+			print "Decrypted name: " + room.decrypt()
+			print "Sector ID: " + str(room.sectorId)
