@@ -23,9 +23,9 @@ for position in range(8):
 
 	print letterCount
 
-	max = 0
+	max = 99999
 	for letter, count in letterCount.iteritems():
-		if count > max:
+		if count < max:
 			password[position] = letter
 			max = count
 		#print "letter=" + letter + ", count=" + str(count)
