@@ -7,7 +7,7 @@ class Screen:
 	def __init__(self, width, height):
 		self.width = width
 		self.height = height
-		self.matrix = [['.' for x in range(width)] for y in range(height)] 
+		self.matrix = [[' ' for x in range(width)] for y in range(height)] 
 
 	def drawRect(self, col, row):
 		print "draw col=" + str(col) + ", row=" + str(row)
@@ -25,7 +25,6 @@ class Screen:
 				self.matrix[i][j] = tempMatrix[i][index]
 		elif type == 'column':
 			j = number
-			print "rotate col=" + str(j)
 			for i in range(self.height):
 				index = (i+self.height-length)%self.height
 				self.matrix[i][j] = tempMatrix[index][j]
@@ -33,7 +32,12 @@ class Screen:
 			raise NameError("Invalid rotation type. It shall be row or column: " + type)
 
 	def printScreen(self):
-		print np.matrix(self.matrix)
+		myStr = ""
+		for i in range(self.height):
+			for j in range(self.width):
+				myStr += self.matrix[i][j]
+			myStr += "\n"
+		print myStr
 
 	def getPixelsLit(self):
 		count = 0
@@ -84,7 +88,6 @@ for input in inputs:
 	else:
 		raise NameError("Invalid instruction format: " + input)
 
-	screen.printScreen()
-	print "\n"
-
+	
+screen.printScreen()
 print "pixels lit:" + str(screen.getPixelsLit())
