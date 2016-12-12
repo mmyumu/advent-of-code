@@ -33,6 +33,9 @@ for input in inputs:
 	match = pattern.search(line)
 
 	if match:
+		print "Valid: " + input
 		count += 1
+	else:
+		print "Invalid: " + input
 
 print "Number of IPs: " + str(count)
