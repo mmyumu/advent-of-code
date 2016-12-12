@@ -4,39 +4,55 @@ import re
 markerPattern = re.compile("(\d+)x(\d+)")
 
 class Marker:
-	def __init__(self, endIndex, subCharacters, times):
+	def __init__(self, startIndex, endIndex, subCharacters, times):
+		self.startIndex = startIndex
 		self.endIndex = endIndex
 		self.subCharacters = subCharacters
 		self.times = times
 
 	def getFollowingIndex(self):
-		return self.endIndex + self.subCharacters
+		return self.endIndex + self.subCharacters + 1
 
 
 
 
 class Parser:
-	def __init__(self, input):
+	def __init__(self, input, depth):
 		self.input = input
-		#self.index = 0
-		#self.result = ""
+		self.depth = depth
 
 	def parse(self):
-		result = ""
 		index = 0
+		count = 0
+		print "[" + str(self.depth) + "] parse input=" + self.input
 		while index < len(self.input):
 			marker = self.parseMarker(index)
-			if not marker == False:
-				result += self.decompressMarker(marker)
-				index = marker.getFollowingIndex()
-			else:
-				result += self.input[index]
-			index += 1
+			if marker:
+				print "[" + str(self.depth) + "] startIndex=" + str(marker.startIndex)
+				print "[" + str(self.depth) + "] endIndex=" + str(marker.endIndex)
+				print "[" + str(self.depth) + "] subChars=" + str(marker.subCharacters)
+				subInput = self.input[marker.endIndex + 1:marker.getFollowingIndex()]
 
-		return result
+				parser = Parser(subInput, self.depth + 1)
+
+
+				print "[" + str(self.depth) + "] index1=" + str(index)
+				index = marker.getFollowingIndex()
+				print "[" + str(self.depth) + "] index2=" + str(index)
+
+
+				count += parser.parse() * marker.times
+				#print marker.subCharacters
+			else:
+				index += 1
+				count += 1
+				
+		print "[" + str(self.depth) + "] count=" + str(count)
+		return count
 
 	def parseMarker(self, index):
 		markerStr = ""
+		startIndex = index
 		if self.input[index] == '(':
 			index += 1
 			currentCharacter = self.input[index]
@@ -47,7 +63,7 @@ class Parser:
 
 			marker = markerPattern.match(markerStr)
 			if marker:
-				return Marker(index, int(marker.group(1)), int(marker.group(2)))
+				return Marker(startIndex, index, int(marker.group(1)), int(marker.group(2)))
 		return False
 
 	def decompressMarker(self, marker):
@@ -75,7 +91,7 @@ result = ""
 for inputLine in inputs:
 	input += inputLine.replace("\n", "").replace(" ", "")
 
-parser = Parser(input)
-decompressedMsg = parser.parse()
-print decompressedMsg
-print "length=" + str(len(decompressedMsg))
+parser = Parser(input, 0)
+count = parser.parse()
+
+print "length=" + str(count)
